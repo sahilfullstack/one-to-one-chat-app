@@ -6,6 +6,7 @@ const {isString, sendMessage} = require('./utils.js');
 var users = new Users();
 
 server.listen(3000);
+console.log("Server is listening to port 3000");
 var user = 'User:';
 
 app.get('/', function(request, response) {
