@@ -1,0 +1,21 @@
+{
+  "name": "momspresso-chat-app",
+  "version": "1.0.0",
+  "description": "Chat app assignment for momspresso",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chat",
+    "sahil",
+    "node",
+    "socket.io"
+  ],
+  "author": "Sahil Sarpal",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "socket.io": "^2.1.1"
+  }
+}
