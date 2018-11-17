@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Momspresso Chat Assignment</title>
+<style type="text/css">
+	
+	*{ margin:0; padding: 0; box-sizing: border-box;}
+	body{ font:13px Helvetica, Arial;}
+	form{ background:rgba(0, 0, 0, 0.21); padding: 3px; position: fixed; bottom: 0; width: 100%}
+	form input{ border: 0; padding: 10px; width:90%; margin-right: .5%}
+	form button{ background: rgba(0, 0, 0, 0.21); border: none; padding: 10px;  cursor:pointer;}
+	#messages { list-style-type: none; margin: 0; padding: 0;}
+	#messages li { padding: 5px 10px;}
+	#messages li:nth-child(odd) { background: #eee;}
+
+	.vl {
+	    border-left: 3px solid black;
+	    height: 1000px;
+	}
+	</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body id="chat">
+<div class="container">
+	<div class="panel panel-default">
+	  <div class="panel-heading">Go Online</div>
+		<form action="/chat ">
+		<div class="panel-body">
+			<div class="form-field">
+				<label>Display Name</label>
+				<input type="text" name="name" value="Anonomous" autofocus>
+			</div>			
+		</div>		
+		<div class="panel-footer"><button>Go Online</button></div>
+		</form>
+	</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.6/socket.io.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/0.12.15/vue.min.js"></script>
+<script type="text/javascript">
+	var socket = io();
+	new Vue({
+		el: '#chat',
+		data: {
+			messages: [],
+			message: '',
+			users: [],
+			room: 'Anonomous Room',
+		},
+		ready: function() {
+			let self = this;
+			socket.on('connect', function ()  {
+
+				console.log('Connected to Server');
+
+				socket.on('newMessage', function (params) {
+					console.log("newMessage");
+					console.log(params.message);
+					self.messages.push(params.name +' : '+ params.message);
+				})
+			});
+
+
+			socket.on('createMessage', function(message) {
+				this.messages.push(message);
+			}.bind(this));
+
+			socket.on('updateUserList', function (users) {
+				self.users = users;
+			});	
+		},
+		methods: {
+			
+			joinRoom: function(e){
+
+				var params = {};
+
+			    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+			        params[key] = value;
+			    });
+
+			    self.room = params.room;
+
+				socket.emit('join', params, function (err) {
+
+					if (err) {
+						alert(err);
+						window.location.href = '/';
+					} else {
+						console.log('No errors');
+					}
+				});
+			},
+			send: function(e){
+				let self = this;
+				
+				socket.emit('createMessage', this.message, function () {
+					self.message = '';
+				});
+
+				e.preventDefault();
+			}
+		}
+	})
+</script>
+
+</body>
+</html>

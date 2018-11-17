@@ -1,11 +1,16 @@
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+
 const {Users} = require('./users.js');
 const {isString, sendMessage} = require('./utils.js');
 var users = new Users();
 
+const redisAdapter = require('socket.io-redis');
+io.adapter(redisAdapter({ host: 'localhost', port: 6379 }));
+
 server.listen(3000);
+
 console.log("Server is listening to port 3000");
 var user = 'User:';
 
@@ -16,8 +21,6 @@ app.get('/', function(request, response) {
 app.get('/chat', function(request, response) {
 	response.sendFile(__dirname +'/public/chat.html');
 });
-
-
 
 io.on('connection', function(socket) {
 	console.log('A connection was made');
